@@ -5,7 +5,6 @@ import webbrowser
 import os
 import io
 
-# Попытка импорта внешних библиотек
 try:
     import requests
     from bs4 import BeautifulSoup
@@ -19,10 +18,10 @@ try:
 except ImportError:
     HAS_PDF = False
 
-# База данных локализации
+# База данных локализации с гуманитарными терминами
 LOCALIZATION = {
     "Русский": {
-        "title": "Количественный анализ текстов по методологии YUCT",
+        "title": "Количественный смысловой интерпретатор по методологии YUCT",
         "btn_load": "Выбрать файл (.txt, .pdf)",
         "btn_url": "Анализировать URL",
         "lbl_url": "Вставьте ссылку (URL) для анализа:",
@@ -32,12 +31,12 @@ LOCALIZATION = {
         "footer": "Специально для портала «Философский штурм»",
         "link": "Официальный сайт теории: yuct.org",
         "err_title": "Ошибка",
-        "err_read": "Не удалось прочитать файл.\nУбедитесь в корректности формата.\nДетали: ",
+        "err_read": "Не удалось прочитать файл.\nПроверьте формат.\nДетали: ",
         "err_lib_pdf": "Для чтения PDF установите библиотеку: pip install pypdf",
         "err_lib_web": "Для анализа URL установите: pip install requests beautifulsoup4",
         "err_url_fail": "Не удалось скачать текст по ссылке. Проверьте сеть или URL.",
         "warn_size": "\n⚠️ ВНИМАНИЕ: Размер текста менее 1000 слов!\nВозможна аномалия Парменида (искусственное завышение K_eff).\n",
-        "rep_header": "=== ОТЧЕТ О КООРДИНАЦИОННОЙ ЭФФЕКТИВНОСТИ СИСТЕМЫ ===",
+        "rep_header": "=== ОТЧЕТ КОЛИЧЕСТВЕННОГО СМЫСЛОВОГО ИНТЕРПРЕТАТОРА YUCT ===",
         "rep_src": "Источник данных",
         "rep_volume": "Объем чистой мысли",
         "rep_hd": "Энтропия словаря H(D)",
@@ -47,6 +46,10 @@ LOCALIZATION = {
         "rep_bell": "Когерентность Белла (S)",
         "rep_max": "макс",
         "rep_phase": "ФАЗОВЫЙ СТАТУС",
+        "diag_title": "\n--- АНАЛИТИЧЕСКИЙ ДИАГНОЗ YUCT ---",
+        "diag_math": "МАТЕМАТИЧЕСКИЙ ВЕРДИКТ",
+        "diag_human": "ГУМАНИТАРНЫЙ ВЕРДИКТ (Резонанс R)",
+        "diag_tip": "СОВЕТ АВТОРУ",
         "phases": {
             "absurd": "Нигилизм / Абсурд",
             "relativism": "Скептицизм / Релятивизм",
@@ -81,6 +84,10 @@ LOCALIZATION = {
         "rep_bell": "Bell Coherence (S)",
         "rep_max": "max",
         "rep_phase": "PHASE STATUS",
+        "diag_title": "\n--- YUCT ANALYTICAL DIAGNOSIS ---",
+        "diag_math": "MATHEMATICAL VERDICT",
+        "diag_human": "HUMANITARIAN VERDICT (Resonance R)",
+        "diag_tip": "TIP FOR THE AUTHOR",
         "phases": {
             "absurd": "Nihilism / Absurd",
             "relativism": "Skepticism / Relativism",
@@ -91,10 +98,67 @@ LOCALIZATION = {
     }
 }
 
+class YUCTInterpreter:
+    """Генератор содержательных гуманитарных интерпретаций для шкал Keff."""
+    @staticmethod
+    def get_diagnosis(k_eff, lang="Русский"):
+        if lang not in ["Русский", "English"]:
+            lang = "Русский"
+            
+        if k_eff < 2:
+            return {
+                "math": "Понятийный каркас отсутствует. Термины используются бессистемно.",
+                "human": "Текст находится в фазе чистого деконструктивизма или хаотического шума.",
+                "tip": "Выделите хотя бы 3 базовых тезиса и обопритесь на них."
+            } if lang == "Русский" else {
+                "math": "Conceptual framework is absent. Terms are used randomly.",
+                "human": "Text is in pure deconstructivism or chaotic noise phase.",
+                "tip": "Identify at least 3 core theses and build upon them."
+            }
+        elif 2 <= k_eff < 5:
+            return {
+                "math": "Высокая синонимическая избыточность, сильный метафорический шум.",
+                "human": "Внимание! Это признак ЯРКОЙ ИНДИВИДУАЛЬНОСТИ, поэтики или философии стиля Ницше.",
+                "tip": "Если цель - строгая наука, сократите метафоры. Если цель - эмоция, сохраняйте стиль."
+            } if lang == "Русский" else {
+                "math": "High synonymic redundancy, severe metaphorical noise.",
+                "human": "Attention! This indicates BRIGHT INDIVIDUALITY, poetry or Nietzsche-style philosophy.",
+                "tip": "For strict science, cut metaphors. For emotional impact, preserve your unique style."
+            }
+        elif 5 <= k_eff < 10:
+            return {
+                "math": "Развитая, устойчивая мыслительная система с хорошим понятийным балансом.",
+                "human": "Прочный академический фундамент, выраженная и структурированная авторская позиция.",
+                "tip": "Система стабильна. Формализуйте переходы между главами для снижения ошибки (eps)."
+            } if lang == "Русский" else {
+                "math": "Developed, stable cognitive system with a good conceptual balance.",
+                "human": "Solid academic foundation, pronounced and structured authorial position.",
+                "tip": "System is stable. Formalize transitions between chapters to reduce internal error (eps)."
+            }
+        elif 10 <= k_eff < 20:
+            return {
+                "math": "Предельная концентрация смыслов. Аксиоматический базис максимально сжат.",
+                "human": "Уровень великих классиков (Кант, Гегель). Индивидуальность сплавлена с железной логикой.",
+                "tip": "Текст монументален. Проверьте систему на способность объяснять собственные основания."
+            } if lang == "Русский" else {
+                "math": "Ultimate concentration of meanings. Axiomatic basis is maximally compressed.",
+                "human": "Level of the great classics (Kant, Hegel). Individuality is fused with iron logic.",
+                "tip": "The text is monumental. Test the system for its ability to explain its own foundations."
+            }
+        else:
+            return {
+                "math": "Абсолютно лаконичная, самоприменимая структура чистых законов.",
+                "human": "Уровень математических мета-теорий (YUCT). Логика полностью очищена от субъективного шума.",
+                "tip": "Убедитесь, что это не аномалия Парменида на сверхмалом объеме текста."
+            } if lang == "Русский" else {
+                "math": "Absolutely laconic, self-applicable structure of pure laws.",
+                "human": "Level of mathematical meta-theories (YUCT). Logic is fully cleared of subjective noise.",
+                "tip": "Ensure this is not a Parmenides anomaly on an ultra-small text volume."
+            }
+
 def calculate_yuct_metrics(h_d, h_i, lang="Русский", alpha=0.1):
     """Математический движок YUCT."""
     kc = 1 / 3
-    # Проверка на случай отсутствия языка в базе (фолбэк на Английский)
     safe_lang = lang if lang in LOCALIZATION else "English"
     ph = LOCALIZATION[safe_lang]["phases"]
     if h_i == 0:
@@ -147,15 +211,13 @@ class YUCTAnalzerApp:
         self.raw_text_content = ""
         self.current_source_name = ""
         
-        self.root.title("YUCT Quantitative Philosophy Analyzer v1.3")
-        self.root.geometry("690x680")
+        self.root.title("Количественный смысловой интерпретатор YUCT v1.4.1")
+        self.root.geometry("710x720")
         self.root.configure(bg="#f0f4f8")
         
-        # Языковая панель
         lang_frame = tk.Frame(root, bg="#f0f4f8")
         lang_frame.pack(anchor="ne", padx=15, pady=5)
         
-        # Ограничиваем список основными языками для краткости GUI
         gui_langs = ["Русский", "English"]
         self.combo_lang = ttk.Combobox(lang_frame, values=gui_langs, state="readonly", width=15)
         self.combo_lang.set("Русский")
@@ -165,16 +227,13 @@ class YUCTAnalzerApp:
         self.lbl_title = tk.Label(root, text="", font=("Arial", 14, "bold"), bg="#f0f4f8", fg="#1a365d")
         self.lbl_title.pack(pady=5)
         
-        # Блок локальных файлов
         self.btn_load = tk.Button(root, text="", command=self.load_file,
                                   font=("Arial", 11, "bold"), bg="#2b6cb0", fg="white", 
                                   padx=10, pady=5, relief="flat")
         self.btn_load.pack(pady=5)
         
-        # Разделитель
-        tk.Frame(root, height=1, width=600, bg="#cbd5e0").pack(pady=10)
+        tk.Frame(root, height=1, width=600, bg="#cbd5e0").pack(pady=5)
         
-        # Блок URL веб-анализа
         self.lbl_url_prompt = tk.Label(root, text="", font=("Arial", 10), bg="#f0f4f8", fg="#2d3748")
         self.lbl_url_prompt.pack()
         
@@ -189,11 +248,10 @@ class YUCTAnalzerApp:
                                  padx=5, relief="flat")
         self.btn_url.pack(side="left")
         
-        # Информационная строка
         self.lbl_file = tk.Label(root, text="", font=("Arial", 10, "italic"), bg="#f0f4f8", fg="#4a5568")
         self.lbl_file.pack(pady=5)
         
-        self.txt_output = scrolledtext.ScrolledText(root, width=80, height=16, font=("Courier New", 10),
+        self.txt_output = scrolledtext.ScrolledText(root, width=82, height=20, font=("Courier New", 10),
                                                     bg="white", fg="#2d3748", bd=1, relief="solid")
         self.txt_output.pack(pady=5, padx=15)
         
@@ -243,7 +301,6 @@ class YUCTAnalzerApp:
                 if not HAS_PDF:
                     messagebox.showwarning(lang_data["err_title"], lang_data["err_lib_pdf"])
                     return
-                # Парсинг слоев PDF
                 reader = pypdf.PdfReader(file_path)
                 text_layers = []
                 for page in reader.pages:
@@ -274,12 +331,10 @@ class YUCTAnalzerApp:
                 messagebox.showerror(lang_data["err_title"], lang_data["err_url_fail"])
                 return
                 
-            # ИСПРАВЛЕНИЕ: Проверяем, не является ли ссылка PDF-файлом
             if url.lower().endswith('.pdf') or "application/pdf" in response.headers.get('Content-Type', ''):
                 if not HAS_PDF:
                     messagebox.showwarning(lang_data["err_title"], lang_data["err_lib_pdf"])
                     return
-                # Читаем бинарный поток PDF из сети без сохранения на диск
                 pdf_file = io.BytesIO(response.content)
                 reader = pypdf.PdfReader(pdf_file)
                 text_layers = []
@@ -289,7 +344,6 @@ class YUCTAnalzerApp:
                         text_layers.append(t_layer)
                 self.raw_text_content = "\n".join(text_layers)
             else:
-                # Обычная обработка HTML веб-страниц
                 soup = BeautifulSoup(response.text, 'html.parser')
                 for script in soup(["script", "style", "nav", "footer", "header"]):
                     script.decompose()
@@ -307,6 +361,8 @@ class YUCTAnalzerApp:
         words_count = len(self.raw_text_content.split())
         h_d, h_i = process_text_and_estimate_entropy(self.raw_text_content)
         metrics = calculate_yuct_metrics(h_d, h_i, lang=self.current_lang)
+        diag = YUCTInterpreter.get_diagnosis(metrics['K_eff'], lang=self.current_lang)
+        
         self.txt_output.delete(1.0, tk.END)
         self.txt_output.insert(tk.END, f"{lang_data['rep_header']}\n")
         self.txt_output.insert(tk.END, f"{lang_data['rep_src']}: {self.current_source_name}\n")
@@ -321,6 +377,17 @@ class YUCTAnalzerApp:
         self.txt_output.insert(tk.END, f"---------------------------------------------------\n")
         self.txt_output.insert(tk.END, f"{lang_data['rep_phase']}: {metrics['Phase'].upper()}\n")
         self.txt_output.insert(tk.END, f"===================================================\n")
+        
+        # Интеграция текстового интерпретатора индивидуальности
+        self.txt_output.insert(tk.END, f"{lang_data['diag_title']}\n")
+        self.txt_output.insert(tk.END, f"* {lang_data['diag_math']}:\n  {diag['math']}\n\n")
+        self.txt_output.insert(tk.END, f"* {lang_data['diag_human']}:\n  {diag['human']}\n\n")
+        self.txt_output.insert(tk.END, f"* {lang_data['diag_tip']}:\n  {diag['tip']}\n")
+        
+        # Финальная подпись со ссылкой на репозиторий
+        self.txt_output.insert(tk.END, f"===================================================\n")
+        self.txt_output.insert(tk.END, "https://github.com/Alexey-Yakushev-YUCT/verify-quant-philosophy/\n")
+        
         if words_count < 1000:
             self.txt_output.insert(tk.END, lang_data["warn_size"])
 
